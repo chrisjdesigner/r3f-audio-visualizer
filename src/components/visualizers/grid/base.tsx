@@ -20,11 +20,11 @@ interface BaseGridProps {
 
 const BaseGrid = ({
   coordinateMapper,
-  nGridRows = 100,
-  nGridCols = 100,
-  cubeSideLength = 0.025,
+  nGridRows = 60,
+  nGridCols = 60,
+  cubeSideLength = 0.010,
   cubeSpacingScalar = 5,
-  palette = COLOR_PALETTE.THREE_COOL_TO_WARM,
+  palette = COLOR_PALETTE.SR,
   pinStyle = false,
   color = "white",
 }: BaseGridProps) => {

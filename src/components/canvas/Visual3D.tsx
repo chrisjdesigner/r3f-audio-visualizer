@@ -1,16 +1,11 @@
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Bounds, Box } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { folder, useControls } from "leva";
 import { ApplicationMode, APPLICATION_MODE } from "../applicationModes";
 import {
-  AVAILABLE_COLOR_PALETTES,
-  ColorPalette,
   ColorPaletteType,
   COLOR_PALETTE,
 } from "../visualizers/palettes";
 import AudioVisual from "../visualizers/visualizerAudio";
-import NoiseVisual from "../visualizers/visualizerNoise";
-import ParticleNoiseVisual from "../visualizers/visualizerParticleNoise";
 import WaveformVisual from "../visualizers/visualizerWaveform";
 
 const getVisualizerComponent = (
@@ -21,12 +16,6 @@ const getVisualizerComponent = (
   switch (mode) {
     case APPLICATION_MODE.WAVE_FORM:
       return <WaveformVisual visual={visual} palette={palette} />;
-    case APPLICATION_MODE.NOISE:
-      return visual === "particleSwarm" ? (
-        <ParticleNoiseVisual />
-      ) : (
-        <NoiseVisual visual={visual} palette={palette} />
-      );
     case APPLICATION_MODE.AUDIO:
       return <AudioVisual visual={visual} palette={palette} />;
     default:
@@ -36,46 +25,10 @@ const getVisualizerComponent = (
 export interface Visual3DCanvasProps {
   mode: ApplicationMode;
 }
-const AVAILABLE_VISUALS = [
-  "grid",
-  "sphere",
-  "cube",
-  "diffusedRing",
-  "pinGrid",
-  "dna",
-  // "traceParticles",
-  // "particleSwarm",
-];
 const Visual3DCanvas = ({ mode }: Visual3DCanvasProps) => {
-  const visualizerParam = new URLSearchParams(document.location.search).get(
-    "visual"
-  ) as string;
-  const { visualizer } = useControls({
-    visualizer: {
-      value:
-        visualizerParam && AVAILABLE_VISUALS.includes(visualizerParam)
-          ? visualizerParam
-          : AVAILABLE_VISUALS[0],
-      options: AVAILABLE_VISUALS,
-    },
-  });
-  const { palette, colorBackground } = useControls({
-    "Visual - Color": folder(
-      {
-        palette: {
-          value: COLOR_PALETTE.THREE_COOL_TO_WARM,
-          options: AVAILABLE_COLOR_PALETTES,
-        },
-        colorBackground: false,
-      },
-      { collapsed: true }
-    ),
-  });
-  const backgroundColor = colorBackground
-    ? ColorPalette.getPalette(palette).calcBackgroundColor(0)
-    : "#010204";
   return (
     <Canvas
+      shadows
       camera={{
         fov: 45,
         near: 1,
@@ -84,11 +37,21 @@ const Visual3DCanvas = ({ mode }: Visual3DCanvasProps) => {
         up: [0, 0, 1],
       }}
     >
-      <color attach="background" args={[backgroundColor]} />
+      
+      {/* Lighting */}
       <ambientLight />
-      <fog attach="fog" args={[backgroundColor, 0, 100]} />
-      {getVisualizerComponent(mode as ApplicationMode, visualizer, palette)}
-      {/* <Stats /> */}
+
+      {/* Visualizer */}
+      {getVisualizerComponent(mode as ApplicationMode, "grid", COLOR_PALETTE.SR)}
+
+      {/* Transparent Box to Control the Current Camera */}
+      <Bounds fit clip observe damping={10} margin={2}>
+        <Box args={[7.5, 7.5, 2]} position={[0, 1, 0]}>
+          <meshPhongMaterial color="#ff0000" opacity={0} transparent />
+        </Box>
+      </Bounds>
+      
+      {/* Orbit Controls */}
       <OrbitControls makeDefault />
     </Canvas>
   );

@@ -1,4 +1,3 @@
-import { folder, useControls } from "leva";
 import React, { Suspense } from "react";
 import { useEnergyInfo, useVisualSourceDataX } from "../../appState";
 import { CoordinateMapper_Data } from "../mappers/coordinateMappers/data";
@@ -12,22 +11,11 @@ interface AudioVisualProps {
 
 const AudioVisual = ({
   visual,
-  palette = COLOR_PALETTE.THREE_COOL_TO_WARM,
+  palette = COLOR_PALETTE.SR,
 }: AudioVisualProps) => {
   const freqData = useVisualSourceDataX();
   const energyInfo = useEnergyInfo();
-
-  const { amplitude } = useControls({
-    Audio: folder({
-      amplitude: {
-        value: 1.0,
-        order: 74,
-        min: 0.0,
-        max: 5.0,
-        step: 0.01,
-      },
-    }),
-  });
+  const amplitude = 1.0;
 
   const coordinateMapper = new CoordinateMapper_Data(amplitude, freqData);
   const energyTracker = new EnergyTracker(energyInfo);

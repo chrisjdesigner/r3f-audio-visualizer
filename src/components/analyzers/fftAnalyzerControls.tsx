@@ -1,4 +1,3 @@
-import { folder, useControls } from "leva";
 import { useEffect, useRef } from "react";
 import {
   useAppStateActions,
@@ -11,37 +10,8 @@ export interface FFTAnalyzerControlsProps {
   analyzer: FFTAnalyzer;
 }
 const FFTAnalyzerControls = ({ analyzer }: FFTAnalyzerControlsProps) => {
-  const { octaveBands, energyMeasure } = useControls({
-    Audio: folder({
-      octaveBands: {
-        value: 2,
-        order: 75,
-        options: {
-          "1/24th octave bands": 1,
-          "1/12th octave bands": 2,
-          "1/8th octave bands": 3,
-          "1/6th octave bands": 4,
-          "1/4th octave bands": 5,
-          "1/3rd octave bands": 6,
-          "Half octave bands": 7,
-          "Full octave bands": 8,
-        },
-      },
-      energyMeasure: {
-        value: "overall",
-        order: 76,
-        options: [
-          "overall",
-          "peak",
-          "bass",
-          "lowMid",
-          "mid",
-          "highMid",
-          "treble",
-        ],
-      },
-    }),
-  });
+  const octaveBands = 2;
+  const energyMeasure = 'overall';
   const freqData = useVisualSourceDataX();
   const energyInfo = useEnergyInfo();
   const { resizeVisualSourceData } = useAppStateActions();
